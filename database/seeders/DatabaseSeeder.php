@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Chatroom;
 use App\Models\User;
 use Carbon\Carbon;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -17,10 +18,20 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Davey',
+            'email' => 'davey@example.com',
             'password' => bcrypt('WachtP00rt'),
             'email_verified_at' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        Chatroom::factory()->create([
+            'title' => 'AMD leaks',
+            'description' => 'Talking about potential leaks of new amd processor',
+            'is_private' => 0,
+            'enabled' => 1,
+            'key' => '03veni',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
