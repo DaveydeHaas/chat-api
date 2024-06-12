@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('chatrooms', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->boolean('is_private');
-            $table->boolean('enabled');
+            $table->string('description')->nullable();
+            $table->boolean('is_private')->default(0);
+            $table->boolean('enabled')->default(1);
+            $table->string('key')->unique();
             $table->timestamps();
         });
     }

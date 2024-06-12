@@ -8,12 +8,13 @@ use Laravel\Passport\Passport;
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * The policy mappings for the application.
+     *
+     * @var array
      */
-    public function register(): void
-    {
-        //
-    }
+    protected $policies = [
+        'App\Models\Model' => 'App\Policies\ModelPolicy', //uncomment
+    ];
 
     /**
      * Bootstrap any application services.
