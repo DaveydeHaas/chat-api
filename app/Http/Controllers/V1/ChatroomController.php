@@ -19,7 +19,29 @@ class ChatroomController extends Controller
      */
     public function index(Request $request)
     {
-        $chatrooms = Chatroom::where('enabled', 1)->get();
+        $user = $request->user();
+    
+        // Load all chatrooms with their users
+        $chatrooms = Chatroom::where('enabled', 1)->with('users')->get();
+    
+        // Check if the user is already a member in every chatroom
+        if ($user) {
+            foreach ($chatrooms as $chatroom) {
+                $isMember = $chatroom->users->contains('id', $user->id);
+    
+                if ($isMember) {
+                    // Filter users to include only the authenticated user
+                    $chatroom->users = $chatroom->users->filter(function ($u) use ($user) {
+                        return $u->id === $user->id;
+                    });
+                } else {
+                    // If user is not a member, clear the users collection
+                    $chatroom->users = collect([]);
+                }
+            }
+        }
+    
+        // Return the chatrooms using ChatroomResource
         return ChatroomResource::collection($chatrooms);
     }
 
@@ -66,6 +88,7 @@ class ChatroomController extends Controller
         $existingMembership = ChatroomUser::where('user_id', $user->id)
                                           ->where('chatroom_id', $id)
                                           ->exists();
+
         if ($existingMembership) {
             return response()->json([
                 'message' => 'User is already a member of the chatroom.'
