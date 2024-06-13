@@ -9,25 +9,21 @@ class Chatroom extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'title',
-        'description',
-        'is_private',
-        'enabled',
-
+        'title', 'description', 'is_private', 'enabled'
     ];
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'chatrooms';
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'chatroom_users')
+                    ->withPivot('is_admin', 'accepted', 'banned', 'joined_at', 'left_at')
+                    ->using(ChatroomUser::class);
+    }
 
+    public function messages()
+    {
+        return $this->hasMany(Chatmessage::class);
+    }
 }
