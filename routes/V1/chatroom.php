@@ -6,5 +6,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/chatrooms', [ChatroomController::class, 'index']);
+    Route::post('/joinChatroomById/{id}',[ChatroomController::class, 'joinChatroomById']);
     
 });

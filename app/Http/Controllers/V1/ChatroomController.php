@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ChatroomResource;
 use App\Models\Chatroom;
+use App\Models\ChatroomUser;
 use Illuminate\Http\Request;
 
 class ChatroomController extends Controller
@@ -19,6 +20,77 @@ class ChatroomController extends Controller
     {
         $chatrooms = Chatroom::where('enabled', 1)->get();
         return ChatroomResource::collection($chatrooms);
+    }
+
+    /**
+     * Joins the given chatroom
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param   $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getChatroom(Request $request, $id)
+    {
+        $chatroom = Chatroom::find($id);
+
+        if (!$chatroom) {
+            return response()->json(['message' => 'Chatroom not found.'], 404);
+        }
+
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        // Check if the authenticated user is linked with the chatroom
+        $isMember = $user->chatrooms()->where('chatrooms.id', $id)->exists();
+
+        if (!$isMember) {
+            return response()->json(['message' => 'User is not linked with this chatroom.'], 403);
+        }
+
+        // If user is linked, return the chatroom details
+        return response()->json([
+            'chatroom' => $chatroom,
+            'message' => 'Chatroom details retrieved successfully.'
+        ], 200);
+    }
+
+    /**
+     * Joins the given chatroom
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function joinChatroomById(Request $request, $id)
+    {
+        return $request;
+        // Check if the user is already a member of the chatroom
+        $existingMembership = ChatroomUser::where('user_id', $request->user->id)
+                                          ->where('chatroom_id', $id)
+                                          ->exists();
+
+        if ($existingMembership) {
+            return response()->json([
+                'message' => 'User is already a member of the chatroom.'
+            ], 422);
+        }
+
+        // Needs rework if chatroom is private
+        ChatroomUser::create([
+            'user_id' => $request->user->id,
+            'chatroom_id' => $id,
+            'is_admin' => 0,
+            'accepted' => 1,
+            'joined_at' => now(),
+            'left_at' => null,
+            'banned' => null
+        ]);
+
+        return response()->json([
+            'message' => 'User joined the chatroom successfully.'
+        ], 200);
     }
 
     /**
