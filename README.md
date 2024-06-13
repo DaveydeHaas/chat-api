@@ -3,7 +3,7 @@
 2. Open terminal and insert the following commands
  - Composer install
  - php artisan install:api --passport
- - php artisan passport:keys
  - php artisan migrate
+ - php artisan passport:keys
  - php artisan db:seed
 
