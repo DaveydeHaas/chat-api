@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ChatroomResource;
+use App\Models\ChatMessage;
 use App\Models\Chatroom;
 use App\Models\ChatroomUser;
 use Illuminate\Http\Request;
@@ -106,19 +107,31 @@ class ChatroomController extends Controller
             'banned' => 0
         ]);
 
-        $chatroom = Chatroom::where('id', $id)->first();
-
-        // Emit event to Node.js server
-        $response = Http::post('http://localhost:3000/join-chatroom', [
-            'user_id' => $user->id,
-            'chatroom_id' => $chatroom->id,
-            // Additional data if needed
-        ]);
-
         return response()->json([
             'message' => 'User joined the chatroom successfully.'
         ], 200);
     }
+
+    /**
+     * Saves a message
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function saveMessage(Request $request)
+    {
+        $message = $request->message;
+
+        ChatMessage::create([
+            'chatroom_id' => $message['chatroomId'],
+            'user_id' => $message['userId'],
+            'message' => $message['text'],
+        ]);
+
+        return response()->json([
+            'message' => 'Message saved succesfully.'
+        ], 200);
+    }    
 
     /**
      * Creates a new chatroom

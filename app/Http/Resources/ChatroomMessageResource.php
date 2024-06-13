@@ -14,6 +14,13 @@ class ChatroomMessageResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent;
+        return [
+            'id' => $this->id,
+            'chatroomId' => $this->chatroom_id,
+            'userId' => $this->user_id,
+            'text' => $this->message,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
     }
 }

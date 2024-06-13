@@ -9,6 +9,11 @@ class ChatMessage extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'chatroom_id', 'user_id', 'message', 'created_at', 'updated_at'
+    ];
+
+
     /**
      * The table associated with the model.
      *
@@ -30,6 +35,6 @@ class ChatMessage extends Model
      */
     public function user() 
     {
-        $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 }
