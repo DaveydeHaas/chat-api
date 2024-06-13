@@ -14,6 +14,13 @@ class ChatroomUserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'is_admin' => $this->is_admin,
+            'accepted' => $this->accepted,
+            'banned' => $this->banned,
+            'joined_at' => $this->joined_at,
+            'left_at' => $this->left_at,
+            'user' => UserResource::collection($this->whenLoaded('user')),
+        ];
     }
 }

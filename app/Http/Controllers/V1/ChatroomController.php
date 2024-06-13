@@ -54,7 +54,7 @@ class ChatroomController extends Controller
      */
     public function getChatroomById(Request $request, $id)
     {
-        $chatroom = Chatroom::with('users')->find($id);
+        $chatroom = Chatroom::with(['users','messages.user'])->find($id);
 
         if (!$chatroom) {
             return response()->json(['message' => 'Chatroom not found.'], 404);
