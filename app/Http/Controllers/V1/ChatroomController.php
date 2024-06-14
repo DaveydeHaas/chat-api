@@ -8,6 +8,7 @@ use App\Models\ChatMessage;
 use App\Models\Chatroom;
 use App\Models\ChatroomUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 
 class ChatroomController extends Controller
@@ -141,7 +142,28 @@ class ChatroomController extends Controller
      */
     public function createChatroom(Request $request)
     {
-        // TODO
+        $user = $request->user();
+        $data = $request->data;
+
+        $chatroom = Chatroom::create([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'is_private' => $data['is_private'],
+            'enabled' => $data['enabled'],
+            'key' => Str::random(32),
+        ]);
+
+        ChatroomUser::create([
+            'user_id' => $user->id,
+            'chatroom_id' => $chatroom->id,
+            'is_admin' => 1,
+            'accepted' => 1,
+            'joined_at' => now(),
+            'left_at' => null,
+            'banned' => 0
+        ]);
+
+        return new ChatroomResource($chatroom);
     }
 
     /**

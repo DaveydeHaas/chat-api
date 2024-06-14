@@ -9,8 +9,9 @@ class Chatroom extends Model
 {
     use HasFactory;
 
+    // key is currently not in use could be for encryption
     protected $fillable = [
-        'title', 'description', 'is_private', 'enabled'
+        'title', 'description', 'is_private', 'enabled', 'key'
     ];
 
     protected $table = 'chatrooms';
